@@ -8,16 +8,16 @@ const ModalDelete = ({ isOpen, onClose, contactId }) => {
   const dispatch = useDispatch();
   const style = {
     borderRadius: "8px",
-    backgroundImage: "linear-gradient(#542c04, #ab5703)",
+    backgroundImage: "linear-gradient(#00BFFF, #87CEEB)" ,
     display: "block",
-    padding: "16px",
+    padding: "20px",
     width: "480px",
-    border: "1px solid black",
+    border: "10px solid black",
   };
   const cssButton = {
-    marginTop: "48px",
+    marginTop: "40px",
     display: "flex",
-    gap: "16px",
+    gap: "12px",
     justifyContent: "center",
   };
 
