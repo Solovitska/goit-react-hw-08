@@ -99,7 +99,7 @@ const RegistrationForm = () => {
             />
           </div>
           <button className={css.button} type="submit">
-          Log In
+          Register
           </button>
         </div>
       </Form>
