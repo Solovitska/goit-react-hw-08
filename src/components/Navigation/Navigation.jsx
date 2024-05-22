@@ -1,35 +1,35 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
-import { selectUserData } from '../../redux/auth/selectors';
-import clsx from 'clsx';
-import css from '../Layout/Layout.module.css';
-import { apiLogoutUser } from '../../redux/auth/operations';
+import { NavLink } from "react-router-dom";
+import css from "./Navigation.module.css";
+import clsx from "clsx";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../../redux/auth/selectors";
 
 const Navigation = () => {
-  const userData = useSelector(selectUserData);
-  const dispatch = useDispatch();
-
-  const getNavLinkClassNames = ({ isActive }) =>
-    clsx(css.link, {
-      [css.active]: isActive,
-    });
-
-  const onLogOut = () => {
-    dispatch(apiLogoutUser());
-  };
+  const logIn = useSelector(selectIsLoggedIn);
   return (
-    <>
-      <NavLink className={getNavLinkClassNames} to="/">
-        Home
-      </NavLink>
-      <NavLink className={getNavLinkClassNames} to="/contacts">
-        Contacts
-      </NavLink>
-      <span>Hello, {userData.name}</span>
-      <button className={css.link} type="button" onClick={onLogOut}>
-        Logout
-      </button>
-    </>
+    <header className={css.head}>
+      <nav className={css.listLink}>
+        <NavLink
+          className={({ isActive }) => {
+            return clsx(css.link, isActive && css.active);
+          }}
+          to="/"
+        >
+          Home
+        </NavLink>
+
+        {logIn && (
+          <NavLink
+            className={({ isActive }) => {
+              return clsx(css.link, isActive && css.active);
+            }}
+            to="/contacts"
+          >
+            Contacts
+          </NavLink>
+        )}
+      </nav>
+    </header>
   );
 };
 

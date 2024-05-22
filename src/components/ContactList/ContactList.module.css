@@ -1,21 +1,13 @@
-.list {
-  list-style: none;
+.contactList {
+  width: 100%;
   display: flex;
-  gap: 16px;
   flex-wrap: wrap;
-}
-
-.item {
-  display: flex;
-  justify-content: space-between;
-  width: 300px;
-  padding: 8px;
-  border: 1px solid black;
+  justify-content: flex-start;
+  gap: 12px;
+  border: 2px solid #000;
   border-radius: 8px;
-  align-items: center;
-  transition: box-shadow 250ms ease-in-out;
+  padding: 16px;
 }
-
-.item:hover {
-  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+.contactListItem {
+  width: calc((100% - 36px) / 4);
 }

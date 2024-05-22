@@ -1,57 +1,78 @@
-import styles from "./ContactForm.module.css";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Field, Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { apiAddUserContact } from "../../redux/contacts/operations";
+import { useId } from "react";
+import css from "./ContactForm.module.css";
 import { useDispatch } from "react-redux";
-
-const contactSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "Too short!")
-    .max(50, "Too long!")
-    .required("Name is required!"),
-  number: Yup.string()
-    .matches(
-      /^[\+]?([0-9]{2})?[(]?([0-9]{3})?[)]?[-\s\.]?[0-9]{2,3}[-\s\.]?[0-9]{2}[-\s\.]?[0-9]{2}$/,
-      "Invalid phone number"
-    )
-    .required("Phone number is required"),
-});
-
-const INITIAL_FORM_DATA = {
-  name: "",
-  number: "",
-};
+import { addContact } from "../../redux/contacts/operations";
+import toast from "react-hot-toast";
 
 const ContactForm = () => {
   const dispatch = useDispatch();
+  const userNameId = useId();
+  const userNumberId = useId();
 
-  const handleSubmit = (data, formActions) => {
-    dispatch(apiAddUserContact(data));
-    formActions.resetForm();
+  const userSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(3, "Too short!")
+      .max(20, "Too Long!")
+      .required("Required"),
+    number: Yup.string()
+      .min(3, "Too short!")
+      .max(20, "Too Long!")
+      .required("Required"),
+  });
+
+  const handleSubmit = (value, actions) => {
+    const contactInfo = {
+      name: value.name,
+      number: value.number,
+    };
+    dispatch(addContact(contactInfo))
+      .unwrap()
+      .then(() => {
+        toast.success("Contact added!");
+      })
+      .catch(() => {
+        toast.error("Sorry, something went wrong.");
+      });
+    actions.resetForm();
   };
 
   return (
     <Formik
-      initialValues={INITIAL_FORM_DATA}
-      validationSchema={contactSchema}
+      initialValues={{
+        name: "",
+        number: "",
+      }}
       onSubmit={handleSubmit}
+      validationSchema={userSchema}
     >
-      <Form className={styles.form}>
-        <div className={styles.inputContainer}>
-          <label>Name</label>
-          <Field type="text" className={styles.input} name="name"></Field>
-          <ErrorMessage className={styles.error} name="name" component="span" />
+      <Form className={css.form}>
+        <div className={css.formInput}>
+          <label htmlFor={userNameId}>Name</label>
+          <Field
+            className={css.formInputField}
+            type="text"
+            name="name"
+            id={userNameId}
+          />
+          <ErrorMessage name="name" component="span" style={{ color: "red" }} />
         </div>
-        <div className={styles.inputContainer}>
-          <label>Number</label>
-          <Field type="tel" className={styles.input} name="number"></Field>
+        <div className={css.formInput}>
+          <label htmlFor={userNumberId}>Number</label>
+          <Field
+            className={css.formInputField}
+            type="tel"
+            name="number"
+            id={userNumberId}
+          />
           <ErrorMessage
-            className={styles.error}
             name="number"
             component="span"
+            style={{ color: "red" }}
           />
         </div>
-        <button className={styles.button} type="submit">
+        <button className={css.button} type="submit">
           Add contact
         </button>
       </Form>

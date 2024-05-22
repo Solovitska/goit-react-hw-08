@@ -1,18 +1,36 @@
 import { Field, Form, Formik, ErrorMessage } from "formik";
+import { useDispatch } from "react-redux";
+import { userRegister } from "../../redux/auth/operations";
 import { useId } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { userLogIn } from "../../redux/auth/operations";
+import css from "./RegistrationForm.module.css";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
-import css from "./LoginForm.module.css";
 
-const LoginForm = () => {
+const RegistrationForm = () => {
   const dispatch = useDispatch();
-
+  const nickNameId = useId();
   const emailId = useId();
   const passwordId = useId();
 
+  const handleSubmit = (values, actions) => {
+    console.log(values);
+    const userInfo = {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    };
+    dispatch(userRegister(userInfo))
+      .then(() => {
+        toast.success("Registration successful!");
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+    actions.resetForm();
+  };
+
   const userSchema = Yup.object().shape({
+    name: Yup.string().min(3, "Too short!").required("Required"),
     email: Yup.string().min(3, "Too short!").required("Required"),
     password: Yup.string()
       .min(6, "Too short!")
@@ -20,30 +38,37 @@ const LoginForm = () => {
       .required("Required"),
   });
 
-  const handleSubmit = (values, actions) => {
-    const userInfo = {
-      email: values.email,
-      password: values.password,
-    };
-
-    dispatch(userLogIn(userInfo));
-    actions.resetForm();
-  };
-
   return (
     <Formik
       initialValues={{
+        name: "",
         email: "",
         password: "",
       }}
       onSubmit={handleSubmit}
       validationSchema={userSchema}
     >
-      <Form className={css.mainForm}>
-        <div className={css.inputList}>
+      <Form className={css.form}>
+        <div className={css.inputBox}>
           <div>
+            <label className={css.label} htmlFor={nickNameId}>
+              Username
+            </label>
+            <Field
+              className={css.input}
+              type="text"
+              name="name"
+              id={nickNameId}
+            />
+            <ErrorMessage
+              name="name"
+              component="span"
+              style={{ color: "red" }}
+            />
+          </div>
+          <div className={css.inputItem}>
             <label className={css.label} htmlFor={emailId}>
-              Your email
+              Email
             </label>
             <Field
               className={css.input}
@@ -59,7 +84,7 @@ const LoginForm = () => {
           </div>
           <div className={css.inputItem}>
             <label className={css.label} htmlFor={passwordId}>
-              Password
+              Password{" "}
             </label>
             <Field
               className={css.input}
@@ -73,9 +98,8 @@ const LoginForm = () => {
               style={{ color: "red" }}
             />
           </div>
-
           <button className={css.button} type="submit">
-          Register
+          Log In
           </button>
         </div>
       </Form>
@@ -83,4 +107,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegistrationForm;

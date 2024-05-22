@@ -1,62 +1,57 @@
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import {
-  apiAddUserContact,
-  apiDeleteUserContact,
-  apiGetUserContacts,
-} from './operations.js';
-import { apiLogoutUser } from '../auth/operations.js';
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchContacts, deleteContact, addContact } from "./operations";
+import { userLogOut } from "../auth/operations";
 
-const INITIAL_STATE = {
-  contacts: null,
-  isLoading: false,
-  isError: false,
+const initialContacts = {
+  items: [],
+  loading: false,
+  error: null,
 };
 
-const phonebookSlice = createSlice({
-  name: 'phonebook',
-  initialState: INITIAL_STATE,
-  extraReducers: builder =>
+const slice = createSlice({
+  name: "contacts",
+  initialState: initialContacts,
+  extraReducers: (builder) =>
     builder
-      .addCase(apiGetUserContacts.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.contacts = action.payload;
+      .addCase(fetchContacts.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(apiAddUserContact.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.contacts = [...state.contacts, action.payload];
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
       })
-      .addCase(apiDeleteUserContact.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.contacts = state.contacts.filter(
-          contact => contact.id !== action.payload.id
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addContact.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(addContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteContact.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = state.items.filter(
+          (item) => item.id !== action.payload.id
         );
       })
-      .addCase(apiLogoutUser.fulfilled, state => {
-        state.contacts = [];
+      .addCase(deleteContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
-
-      .addMatcher(
-        isAnyOf(
-          apiGetUserContacts.pending,
-          apiAddUserContact.pending,
-          apiDeleteUserContact.pending
-        ),
-        state => {
-          state.isLoading = true;
-          state.isError = false;
-        }
-      )
-      .addMatcher(
-        isAnyOf(
-          apiGetUserContacts.rejected,
-          apiAddUserContact.rejected,
-          apiDeleteUserContact.rejected
-        ),
-        state => {
-          state.isLoading = false;
-          state.isError = true;
-        }
-      ),
+      .addCase(userLogOut.fulfilled, (state) => {
+        state.items = [];
+        state.loading = false;
+      }),
 });
 
-export const phonebookReducer = phonebookSlice.reducer;
+export const contactsReducer = slice.reducer;

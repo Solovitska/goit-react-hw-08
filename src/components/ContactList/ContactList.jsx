@@ -1,33 +1,33 @@
-import Contact from "./Contact/Contact";
-import styles from "./ContactList.module.css";
-import { useSelector } from "react-redux";
-import Loader from "../Loader/Loader.jsx";
-import ErrorMessage from "../ErrorMessage/ErrorMessage.jsx";
-import {
-  selectPhonebookIsLoading,
-  selectPhonebookIsError,
-} from "../../redux/contacts/selectors.js";
-import { selectFilteredContacts } from "../../redux/filters/selectors.js";
+import { useDispatch, useSelector } from "react-redux";
+import Contact from "../Contact/Contact";
+import css from "./ContactList.module.css";
+import { nanoid } from "nanoid";
+import { useEffect } from "react";
+import { fetchContacts } from "../../redux/contacts/operations";
+import { selectFilteredContacts } from "../../redux/contacts/selectors";
+import { selectIsLoggedIn } from "../../redux/auth/selectors";
 
 const ContactList = () => {
-  const contacts = useSelector(selectFilteredContacts);
-  const isLoading = useSelector(selectPhonebookIsLoading);
-  const isError = useSelector(selectPhonebookIsError);
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const isloggedIn = useSelector(selectIsLoggedIn);
+  const dispatch = useDispatch();
 
-  return (
-    <>
-      {isLoading && <Loader />}
-      {isError && <ErrorMessage />}
-      <ul className={styles.list}>
-        {contacts &&
-          contacts !== null &&
-          contacts.map((contact) => (
-            <li className={styles.item} key={contact.id}>
-              <Contact data={contact} />
-            </li>
-          ))}
-      </ul>
-    </>
+  useEffect(() => {
+    if (isloggedIn) {
+      dispatch(fetchContacts());
+    }
+  }, [dispatch, isloggedIn]);
+
+  return filteredContacts.length > 0 ? (
+    <ul className={css.contactList}>
+      {filteredContacts.map((item) => (
+        <li key={nanoid()} className={css.contactListItem}>
+          <Contact contacts={item} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>Contacts is empty</p>
   );
 };
 

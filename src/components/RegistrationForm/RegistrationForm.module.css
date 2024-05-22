@@ -1,0 +1,38 @@
+.form {
+    background-image: linear-gradient(#32d7f4, hsl(61, 96%, 55%));
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 8px;
+    border: 1px solid black;
+  }
+  .inputBox {
+    text-align: start;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid black;
+    width: 480px;
+  }
+  .input {
+    border-radius: 8px;
+    border: 4px double black;
+    width: 360px;
+    height: 40px;
+    display: block;
+  }
+  .inputItem {
+    text-align: start;
+    margin-top: 16px;
+  }
+  .label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  .button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: 1px solid rgb(8, 32, 216);
+    border-radius: 8px;
+    color: rgb(8, 25, 216);
+    font-size: 20px;
+    background-color: transparent;
+  }
